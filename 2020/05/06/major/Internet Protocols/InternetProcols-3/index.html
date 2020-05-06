@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Ch 2.IPv4(1) - IP헤더 - Haeng On</title><meta description="IP(Internet Protocol)IP는 OSI 참조 모델의 네트워크 계층 기능을 수행하며 패킷 전송을 위한 주소 정의 및 관리와 라우팅을 담당한다. IP의 특징 비신뢰성(Unreliable)  가능한 범위 내에서 패킷을 목적지까지 전달하는 최선형 서비스(Best Effort Service)   비접속형(Connectionless) 연결 설정 없이 패킷"><meta property="og:type" content="blog"><meta property="og:title" content="Ch 2.IPv4(1) - IP헤더"><meta property="og:url" content="http://niveus323.github.io/2020/05/06/major/Internet%20Protocols/InternetProcols-3/"><meta property="og:site_name" content="Haeng On"><meta property="og:description" content="IP(Internet Protocol)IP는 OSI 참조 모델의 네트워크 계층 기능을 수행하며 패킷 전송을 위한 주소 정의 및 관리와 라우팅을 담당한다. IP의 특징 비신뢰성(Unreliable)  가능한 범위 내에서 패킷을 목적지까지 전달하는 최선형 서비스(Best Effort Service)   비접속형(Connectionless) 연결 설정 없이 패킷"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://user-images.githubusercontent.com/18899404/81145013-53baf980-8fb0-11ea-8c6c-e31933f9e594.png"><meta property="og:image" content="https://user-images.githubusercontent.com/18899404/81148653-a1873000-8fb7-11ea-98cd-9f63b584c193.png"><meta property="og:image" content="https://user-images.githubusercontent.com/18899404/81149637-8ae1d880-8fb9-11ea-81c5-db933409bcdb.png"><meta property="og:image" content="https://user-images.githubusercontent.com/18899404/81155729-38f08100-8fc0-11ea-98be-568235ee6895.JPG"><meta property="og:image" content="https://user-images.githubusercontent.com/18899404/81190056-4888bd80-8ff2-11ea-8cfd-159bb70ff252.png"><meta property="article:published_time" content="2020-05-06T05:48:17.000Z"><meta property="article:modified_time" content="2020-05-06T14:42:44.523Z"><meta property="article:author" content="Haeng Lee"><meta property="article:tag" content="major"><meta property="article:tag" content="IP"><meta property="article:tag" content="IP Packet"><meta property="article:tag" content="IP Header"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://user-images.githubusercontent.com/18899404/81145013-53baf980-8fb0-11ea-8c6c-e31933f9e594.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://niveus323.github.io/2020/05/06/major/Internet%20Protocols/InternetProcols-3/"},"headline":"Haeng On","image":["https://user-images.githubusercontent.com/18899404/81145013-53baf980-8fb0-11ea-8c6c-e31933f9e594.png","https://user-images.githubusercontent.com/18899404/81148653-a1873000-8fb7-11ea-98cd-9f63b584c193.png","https://user-images.githubusercontent.com/18899404/81149637-8ae1d880-8fb9-11ea-81c5-db933409bcdb.png","https://user-images.githubusercontent.com/18899404/81190056-4888bd80-8ff2-11ea-8cfd-159bb70ff252.png"],"datePublished":"2020-05-06T05:48:17.000Z","dateModified":"2020-05-06T14:42:44.523Z","author":{"@type":"Person","name":"Haeng Lee"},"description":"IP(Internet Protocol)IP는 OSI 참조 모델의 네트워크 계층 기능을 수행하며 패킷 전송을 위한 주소 정의 및 관리와 라우팅을 담당한다. IP의 특징 비신뢰성(Unreliable)  가능한 범위 내에서 패킷을 목적지까지 전달하는 최선형 서비스(Best Effort Service)   비접속형(Connectionless) 연결 설정 없이 패킷"}</script><link rel="canonical" href="http://niveus323.github.io/2020/05/06/major/Internet%20Protocols/InternetProcols-3/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/niveus323/niveus323.github.io"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="카탈로그" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2020-05-06T05:48:17.000Z" title="2020-05-06T05:48:17.000Z">2020-05-06</time><span class="level-item"><a class="link-muted" href="/categories/major/">major</a><span> / </span><a class="link-muted" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/">인터넷 프로토콜</a><span> / </span><a class="link-muted" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/Ch-2-IPv4/">Ch 2. IPv4</a></span></div></div><h1 class="title is-3 is-size-4-mobile">Ch 2.IPv4(1) - IP헤더</h1><div class="content"><h1 id="IP-Internet-Protocol"><a href="#IP-Internet-Protocol" class="headerlink" title="IP(Internet Protocol)"></a>IP(Internet Protocol)</h1><p>IP는 OSI 참조 모델의 네트워크 계층 기능을 수행하며 패킷 전송을 위한 주소 정의 및 관리와 라우팅을 담당한다.</p>
+<h2 id="IP의-특징"><a href="#IP의-특징" class="headerlink" title="IP의 특징"></a>IP의 특징</h2><ol>
+<li>비신뢰성(Unreliable) <ul>
+<li>가능한 범위 내에서 패킷을 목적지까지 전달하는 최선형 서비스(Best Effort Service)</li>
+</ul>
+</li>
+<li>비접속형(Connectionless)<ul>
+<li>연결 설정 없이 패킷을 전송</li>
+<li>서로 다른 경로로 패킷이 전송될 수 있으며, 순서도 바뀔 수 있다.</li>
+</ul>
+</li>
+<li>주소 지정<ul>
+<li>네트워크 내의 노드를 고유하게 지정하기 위한 수단으로 IP주소를 사용</li>
+</ul>
+</li>
+<li>경로 결정<ul>
+<li>목적지 IP주소를 기반으로 패킷 전달 경로를 판단(Routing Protocol).</li>
+</ul>
+</li>
+</ol>
+<h2 id="IP패킷-구성"><a href="#IP패킷-구성" class="headerlink" title="IP패킷 구성"></a>IP패킷 구성</h2><p><img title="IP패킷 구성" src="https://user-images.githubusercontent.com/18899404/81145013-53baf980-8fb0-11ea-8c6c-e31933f9e594.png"><br><a id="more"></a></p>
+<ul>
+<li>IP패킷은 헤더 필드와 데이터 필드로 분리.</li>
+<li>헤더 필드에는 패킷을 목적지까지 전송하기 위한 값을 포함.</li>
+<li>헤더의 길이는 확장헤더를 포함한 헤더의 길이이다.</li>
+<li>데이터 필드에는 TCP, UDP와 같은 전송 계층으로부터의 데이터 유닛(IDU)이 포함되어 있다.</li>
+</ul>
+<h3 id="1-버전"><a href="#1-버전" class="headerlink" title="1. 버전"></a>1. 버전</h3><ul>
+<li>IP 프로토콜의 버전을 의미(IPv4의 경우 버전 필드 값은 4).</li>
+</ul>
+<h3 id="2-헤더-길이"><a href="#2-헤더-길이" class="headerlink" title="2. 헤더 길이"></a>2. 헤더 길이</h3><ul>
+<li>옵션 필드를 포함한 헤더의 총 길이를 4바이트 단위로 표시 (확장 헤더를 사용하지 않는 경우 20byte로 헤더 길이 필드 값은 5).</li>
+</ul>
+<h3 id="3-서비스-타입-Type-Of-Service"><a href="#3-서비스-타입-Type-Of-Service" class="headerlink" title="3. 서비스 타입(Type-Of-Service)"></a>3. 서비스 타입(Type-Of-Service)</h3><ul>
+<li>우선권 필드 3비트, TOS(Type-Of-Service)필드 4비트, 예약 필드 1비트로 구성되어 있음.<ul>
+<li>우선권 필드 - 패킷의 우선순위 정의(혼잡시 폐기할 패킷을 우선권 필드 값으로 결정하며 데이터의 중요도를 나타냄).</li>
+<li>TOS 필드 - 최소 지연(Delay), 최대 처리량(Throughput), 최대 신뢰성(Reliability), 최소 비용(Cost)을 4비트로 나타내어 4비트 중 1비트만 set하는 방식으로 타입을 표시.<ul>
+<li>해당 필드 값에 명시된 TOS를 지원하는 서브넷으로 패킷을 라우팅 시키는데 사용됨.</li>
+</ul>
+</li>
+<li>예약 필드 - 0의 값을 갖도록 예약되어 있어 MBZ(Must Be Zero)라고도 불림, 라우터와 수신 측은 이 필드 값을 무시함.</li>
+</ul>
+</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>TOS필드</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1000</td>
+<td>최소 지연</td>
+</tr>
+<tr>
+<td>0100</td>
+<td>최대 처리</td>
+</tr>
+<tr>
+<td>0010</td>
+<td>최대 신뢰성</td>
+</tr>
+<tr>
+<td>0001</td>
+<td>최소 비용</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="4-전체-길이-Total-Length"><a href="#4-전체-길이-Total-Length" class="headerlink" title="4. 전체 길이(Total Length)"></a>4. 전체 길이(Total Length)</h3><ul>
+<li>헤더와 데이터를 포함한 IP 패킷의 전체 길이를 바이트 단위로 표현.</li>
+<li>IP패킷의 최대 크기는 $2^{16}-1=65,534 byte$로 최대 값은 65534.</li>
+</ul>
+<h3 id="5-식별자-Identification"><a href="#5-식별자-Identification" class="headerlink" title="5. 식별자(Identification)"></a>5. 식별자(Identification)</h3><ul>
+<li>패킷 단편화(Fragmentation)로 인한 패킷을 구분하는 역할.</li>
+<li>동일한 데이터로부터 분할된 패킷들은 같은 식별자 값을 가짐.</li>
+</ul>
+<h3 id="6-플래그-Flags"><a href="#6-플래그-Flags" class="headerlink" title="6. 플래그(Flags)"></a>6. 플래그(Flags)</h3><ul>
+<li>예약, 단편화 금지, 추가 단편화 비트의 3비트로 표현됨<ul>
+<li>예약(Reserved) - 항상 0의 값을 갖도록 예약되어 있음.</li>
+<li>단편화 금지(Do not Fragment) - 해당 패킷에 대해 단편화를 하지 않도록 설정, 만약 서브넷이 단편화를 필요로 하고, 단편화 금지 비트 값이 1이라면 패킷을 폐기함.</li>
+<li>추가 단편화 비트(More Fragment) - 비트 값이 1이라면 추가적인 단편화 패킷이 있음, 0이라면 마지막 패킷임을 명시함.</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-단편화-옵셋-Fragment-Offset"><a href="#7-단편화-옵셋-Fragment-Offset" class="headerlink" title="7. 단편화 옵셋(Fragment Offset)"></a>7. 단편화 옵셋(Fragment Offset)</h3><ul>
+<li>패킷 재조립(reassembly)시 분할된 패킷 간의 순서에 대한 정보 포함.</li>
+<li>전체 데이터에서 분할된 패킷의 상대 위치를 8 바이트 단위로 기술.<br><img src="https://user-images.githubusercontent.com/18899404/81148653-a1873000-8fb7-11ea-98cd-9f63b584c193.png" title="Fragment Offset"></li>
+</ul>
+<h3 id="8-Time-To-Live-TTL"><a href="#8-Time-To-Live-TTL" class="headerlink" title="8. Time-To-Live(TTL)"></a>8. Time-To-Live(TTL)</h3><ul>
+<li>패킷이 경유할 수 있는 최대 홉 수(hop count)를 의미.</li>
+<li>패킷이 라우터를 통과할 때마다 TTL 값은 1씩 감소.</li>
+<li>TTL 값이 0이 되면 패킷은 폐기되고 송신 측으로 ICMP메시지를 전달.</li>
+</ul>
+<h3 id="9-프로토콜-Protocol"><a href="#9-프로토콜-Protocol" class="headerlink" title="9. 프로토콜(Protocol)"></a>9. 프로토콜(Protocol)</h3><ul>
+<li>데이터가 어떤 프로토콜을 사용하는지 나타내는 필드</li>
+<li>ICMP프로토콜을 사용한다면 1, TCP프로토콜을 사용한다면 6, UDP프로토콜을 사용한다면 17의 값을 갖는다.</li>
+</ul>
+<h3 id="10-헤더-체크섬-Header-Checksum"><a href="#10-헤더-체크섬-Header-Checksum" class="headerlink" title="10. 헤더 체크섬(Header Checksum)"></a>10. 헤더 체크섬(Header Checksum)</h3><ul>
+<li>IP 패킷 헤더의 오류 발생을 검사하기 위한 필드</li>
+</ul>
+<h3 id="11-옵션"><a href="#11-옵션" class="headerlink" title="11. 옵션"></a>11. 옵션</h3><ul>
+<li>확장 헤더의 필드 값으로, 다음과 같은 옵션이 존재한다.</li>
+</ul>
+<h4 id="1-IP-패킷-헤더-옵션"><a href="#1-IP-패킷-헤더-옵션" class="headerlink" title="(1) IP 패킷 헤더 옵션"></a>(1) IP 패킷 헤더 옵션</h4><ul>
+<li>경로 추적이나 네트워크 상황 파악 등 특정 목적을 위해 사용.</li>
+<li>하나 이상의 옵션을 동시에 사용할 수 있음.</li>
+<li>코드 필드(Code Field)<br>  -복사 필드(Copy Field): 단편화시 단편화된 모든 패킷에 헤더 옵션 필드의 복사 여부를 결정함.(copy=1: 모든 fragment에 option을 복사함.)<ul>
+<li>클래스 필드(Class Field): 값이 0인 경우 패킷 제어를 위해 사용, 2인 경우 디버깅 혹은 측정을 위해 사용.<br><img src="https://user-images.githubusercontent.com/18899404/81149637-8ae1d880-8fb9-11ea-81c5-db933409bcdb.png" title="IP 패킷 헤더 옵션"><h5 id="옵션-종류"><a href="#옵션-종류" class="headerlink" title="옵션 종류"></a>옵션 종류</h5></li>
+</ul>
+</li>
+<li>옵션 종료(End of Option) <ul>
+<li>옵션 필드의 끝을 나타내는 1바이트 옵션.</li>
+<li>남은 옵션종류 공간을 무동작 옵션(NoOp)로 채워넣는다.</li>
+<li>옵션 종료는 마지막 옵션에서만 사용 가능</li>
+<li>옵션 종류 코드값을 0으로 하여 사용.</li>
+</ul>
+</li>
+<li>무동작(No Operation)<ul>
+<li>옵션 간의 경계로 사용되는 1바이트 옵션.</li>
+<li>다른 옵션을 4바이트 경계에 맞추기 위해 사용한다.</li>
+<li>옵션 종류 코드값을 1로 하여 사용.</li>
+</ul>
+</li>
+<li>엄격한 소스 루트(Strict Source Route)<ul>
+<li>전달 경로를 송신 측에서 미리 지정하고 네트워크 장비(라우터)는 경로를 따라서만 패킷을 전송하는 옵션.</li>
+<li>옵션 종류 코드 값을 137로 하여 사용.</li>
+<li>포인터 값은 홉을 지날 때마다 단계적으로 증가하여 다음 경유할 주소를 가르킴</li>
+<li>기술된 경로대로 패킷을 전송할 수 없다면 패킷을 폐기하고 ICM 메시지를 송신측으로 전송.</li>
+<li>IP헤더에 명시된 수신 측 주소에 도달한 경우 해당 옵션 패킷의 포인터에 지나온 IP 주소와 수신 측 주소를 교환, 포인터를 다음 IP주소 정보가 담긴 필드를 가르키는 포인터로 변경함으로써 연속적인 이동 경로의 설정이 가능하다.</li>
+<li>옵션 패킷의 IP주소에 이동한 경로가 기록되므로 패킷의 반환시 기록된 IP주소를 역방향으로 찾아 루트를 재설정 할 수 있음(ex ICMP).</li>
+<li>경유할 IP주소를 일일이 설정해주어야하므로 출발지와 목적지의 IP주소 뿐만 아니라 경유할 IP주소도 미리 기록되어있어야한다.(주소 목록에 저장되지 않은 주소는 경로로 사용할 수 없음)</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://user-images.githubusercontent.com/18899404/81155729-38f08100-8fc0-11ea-98be-568235ee6895.JPG" title="엄격한 소스 루트" alt="엄격한 소스 루트 옵션"></p>
+<ul>
+<li>느슨한 소스 루트(Loose Source Route)<ul>
+<li>옵션 종류 코드 값 131 사용.</li>
+<li>엄격한 소스 루트와 비슷하지만, 주소 목록에 없는 경로라도 사용 가능하다는 점에서 차이점이 존재.</li>
+<li>주어진 IP주소를 모두 경유하되, 도중에 명시되지 않은 경로를 갈 수 있다.</li>
+</ul>
+</li>
+<li>레코드 루트(Record Route)<ul>
+<li>패킷의 전달 경로를 모두 기록.</li>
+<li>옵션 종류 코드 값 7을 사용.</li>
+<li>포인터는 라우터의 주소를 기록할 장소를 가르킨다.</li>
+<li>IP 옵션의 총 길이가 40바이트로 제한되어 있으므로, 기록할 수 있는 경로의 수는 제한되어 있음.</li>
+</ul>
+</li>
+<li>타임스탬프(Timestamp)<ul>
+<li>패킷이 경로상의 라우터에 도착하는 시간을 기록.</li>
+<li>옵션 종류 코드 값 68.</li>
+<li>오버플로우 필드가 존재하며 공간부족으로 기록하지 못한 라우터의 수를 명시한다.</li>
+<li>플래그 필드는 주소나 시간 둘 중 하나만을 기록할 것인지 모두 기록할 것인지를 명시함.</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://user-images.githubusercontent.com/18899404/81190056-4888bd80-8ff2-11ea-8cfd-159bb70ff252.png" title="타임스탬프"></p>
+</div><div class="article-tags size-small is-uppercase mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/major/">major</a><a class="link-muted mr-2" rel="tag" href="/tags/IP/">IP</a><a class="link-muted mr-2" rel="tag" href="/tags/IP-Packet/">IP Packet</a><a class="link-muted mr-2" rel="tag" href="/tags/IP-Header/">IP Header</a></div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/04/25/major/photonics/photonics-6/"><span class="level-item">Ch 2.Electromagnetic Theory, Photons, and Light (3) - 광자, 복사, 분산</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'http://niveus323.github.io/2020/05/06/major/Internet%20Protocols/InternetProcols-3/';
+            this.page.identifier = '2020/05/06/major/Internet Protocols/InternetProcols-3/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'niveus323-github-io' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1"><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="" src="/img/hangon.png" alt="Haeng Lee"></figure><p class="title is-size-4 is-block line-height-inherit">Haeng Lee</p><p class="is-size-6 is-block">student</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Inha University</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">11</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">10</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">23</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/niveus323" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/niveus323"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/major/"><span class="level-start"><span class="level-item">major</span></span><span class="level-end"><span class="level-item tag">11</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/"><span class="level-start"><span class="level-item">광자공학기초</span></span><span class="level-end"><span class="level-item tag">6</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/Ch-1-Wave-Motion/"><span class="level-start"><span class="level-item">Ch 1. Wave Motion</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/Ch-2-Electromagnetic-Theory-Photons-and-Light/"><span class="level-start"><span class="level-item">Ch 2. Electromagnetic Theory, Photons, and Light</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/major/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/"><span class="level-start"><span class="level-item">알고리즘</span></span><span class="level-end"><span class="level-item tag">2</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/major/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-%EB%B6%84%EC%84%9D/"><span class="level-start"><span class="level-item">알고리즘 분석</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/major/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/%EC%A0%95%EB%A0%AC-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/"><span class="level-start"><span class="level-item">정렬 알고리즘</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></li><li><a class="level is-mobile is-marginless" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/"><span class="level-start"><span class="level-item">인터넷 프로토콜</span></span><span class="level-end"><span class="level-item tag">3</span></span></a><ul class="mr-0"><li><a class="level is-mobile is-marginless" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/Ch-1-OSI%EC%99%80-%EC%9D%B8%ED%84%B0%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9-%EC%9E%A5%EB%B9%84/"><span class="level-start"><span class="level-item">Ch 1. OSI와 인터네트워킹 장비</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/Ch-2-IPv4/"><span class="level-start"><span class="level-item">Ch 2. IPv4</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></li></ul></li></ul></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2020-05-06T05:48:17.000Z">2020-05-06</time></p><p class="title is-6"><a class="link-muted" href="/2020/05/06/major/Internet%20Protocols/InternetProcols-3/">Ch 2.IPv4(1) - IP헤더</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/major/">major</a> / <a class="link-muted" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/">인터넷 프로토콜</a> / <a class="link-muted" href="/categories/major/%EC%9D%B8%ED%84%B0%EB%84%B7-%ED%94%84%EB%A1%9C%ED%86%A0%EC%BD%9C/Ch-2-IPv4/">Ch 2. IPv4</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2020-04-25T12:38:00.000Z">2020-04-25</time></p><p class="title is-6"><a class="link-muted" href="/2020/04/25/major/photonics/photonics-6/">Ch 2.Electromagnetic Theory, Photons, and Light (3) - 광자, 복사, 분산</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/major/">major</a> / <a class="link-muted" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/">광자공학기초</a> / <a class="link-muted" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/Ch-2-Electromagnetic-Theory-Photons-and-Light/">Ch 2. Electromagnetic Theory, Photons, and Light</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2020-04-24T15:52:25.000Z">2020-04-25</time></p><p class="title is-6"><a class="link-muted" href="/2020/04/25/major/photonics/photonics-5/">Ch 2.Electromagnetic Theory, Photons, and Light (2) - 포인팅 벡터, 복사조도</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/major/">major</a> / <a class="link-muted" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/">광자공학기초</a> / <a class="link-muted" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/Ch-2-Electromagnetic-Theory-Photons-and-Light/">Ch 2. Electromagnetic Theory, Photons, and Light</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2020-04-22T11:51:07.000Z">2020-04-22</time></p><p class="title is-6"><a class="link-muted" href="/2020/04/22/major/photonics/photonics-4/">Ch 2.Electromagnetic Theory, Photons, and Light (1) - 맥스웰 방정식, 횡파</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/major/">major</a> / <a class="link-muted" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/">광자공학기초</a> / <a class="link-muted" href="/categories/major/%EA%B4%91%EC%9E%90%EA%B3%B5%ED%95%99%EA%B8%B0%EC%B4%88/Ch-2-Electromagnetic-Theory-Photons-and-Light/">Ch 2. Electromagnetic Theory, Photons, and Light</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2020-04-20T15:58:37.000Z">2020-04-21</time></p><p class="title is-6"><a class="link-muted" href="/2020/04/21/major/Algorithm/Algorithm-2/">알고리즘 (2): 거품 정렬, 삽입 정렬, 선택 정렬, 합병 정렬, 빠른 정렬</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/major/">major</a> / <a class="link-muted" href="/categories/major/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/">알고리즘</a> / <a class="link-muted" href="/categories/major/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/%EC%A0%95%EB%A0%AC-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/">정렬 알고리즘</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2020/05/"><span class="level-start"><span class="level-item">5월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2020/04/"><span class="level-start"><span class="level-item">4월 2020</span></span><span class="level-end"><span class="level-item tag">10</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Big-O/"><span class="tag">Big O</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Big-Omega/"><span class="tag">Big Omega</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Big-Theta/"><span class="tag">Big Theta</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Bridge/"><span class="tag">Bridge</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/BubbleSort/"><span class="tag">BubbleSort</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Gateway/"><span class="tag">Gateway</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Hub/"><span class="tag">Hub</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/IP/"><span class="tag">IP</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/IP-Header/"><span class="tag">IP Header</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/IP-Packet/"><span class="tag">IP Packet</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/InsertionSort/"><span class="tag">InsertionSort</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/MergeSort/"><span class="tag">MergeSort</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/OSI/"><span class="tag">OSI</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/QuickSort/"><span class="tag">QuickSort</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Repeater/"><span class="tag">Repeater</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Router/"><span class="tag">Router</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/SelectionSort/"><span class="tag">SelectionSort</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/algorithm/"><span class="tag">algorithm</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/analysis/"><span class="tag">analysis</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/major/"><span class="tag">major</span><span class="tag is-grey-lightest">11</span></a></div><div class="control"><a class="tags has-addons" href="/tags/photonic/"><span class="tag">photonic</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/sorting/"><span class="tag">sorting</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/switch/"><span class="tag">switch</span><span class="tag is-grey-lightest">1</span></a></div></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe to Updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget" id="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">카탈로그</h3><ul class="menu-list"><li><a class="is-flex" href="#IP-Internet-Protocol"><span class="mr-2">1</span><span>IP(Internet Protocol)</span></a><ul class="menu-list"><li><a class="is-flex" href="#IP의-특징"><span class="mr-2">1.1</span><span>IP의 특징</span></a></li><li><a class="is-flex" href="#IP패킷-구성"><span class="mr-2">1.2</span><span>IP패킷 구성</span></a><ul class="menu-list"><li><a class="is-flex" href="#1-버전"><span class="mr-2">1.2.1</span><span>1. 버전</span></a></li><li><a class="is-flex" href="#2-헤더-길이"><span class="mr-2">1.2.2</span><span>2. 헤더 길이</span></a></li><li><a class="is-flex" href="#3-서비스-타입-Type-Of-Service"><span class="mr-2">1.2.3</span><span>3. 서비스 타입(Type-Of-Service)</span></a></li><li><a class="is-flex" href="#4-전체-길이-Total-Length"><span class="mr-2">1.2.4</span><span>4. 전체 길이(Total Length)</span></a></li><li><a class="is-flex" href="#5-식별자-Identification"><span class="mr-2">1.2.5</span><span>5. 식별자(Identification)</span></a></li><li><a class="is-flex" href="#6-플래그-Flags"><span class="mr-2">1.2.6</span><span>6. 플래그(Flags)</span></a></li><li><a class="is-flex" href="#7-단편화-옵셋-Fragment-Offset"><span class="mr-2">1.2.7</span><span>7. 단편화 옵셋(Fragment Offset)</span></a></li><li><a class="is-flex" href="#8-Time-To-Live-TTL"><span class="mr-2">1.2.8</span><span>8. Time-To-Live(TTL)</span></a></li><li><a class="is-flex" href="#9-프로토콜-Protocol"><span class="mr-2">1.2.9</span><span>9. 프로토콜(Protocol)</span></a></li><li><a class="is-flex" href="#10-헤더-체크섬-Header-Checksum"><span class="mr-2">1.2.10</span><span>10. 헤더 체크섬(Header Checksum)</span></a></li><li><a class="is-flex" href="#옵션-종류"><span class="mr-2">1.2.11</span><span>옵션 종류</span></a></li></ul></li></ul></li></ul></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/og_image.png" alt="Haeng On" height="28"></a><p class="size-small"><span>&copy; 2020 Haeng Lee</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'http://niveus323.github.io',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to Top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script><script>window.addEventListener("load", function () {
+            MathJax.Hub.Config({
+                'HTML-CSS': {
+                    matchFontHeight: false
+                },
+                SVG: {
+                    matchFontHeight: false
+                },
+                CommonHTML: {
+                    matchFontHeight: false
+                },
+                tex2jax: {
+                    inlineMath: [
+                        ['$','$'],
+                        ['\\(','\\)']
+                    ]
+                }
+            });
+        });</script><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(Untitled)","posts":"포스트","pages":"Pages","categories":"카테고리","tags":"태그"});
+        });</script></body></html>
