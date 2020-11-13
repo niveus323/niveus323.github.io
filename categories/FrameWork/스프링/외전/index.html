@@ -4,35 +4,7 @@
 <li>자바에서 사용할 수 있는 Expression Language를 Spring에서 개선한 표현 언어.</li>
 <li>SpEL은 기존 EL로부터 메소드 호출, 빈 참조, 객체 그래프와 같은 기능을 추가하여 제공한다.</li>
 <li>SpEL은 Parser와 같은 클래스를 생성한다면 Spring과 연결되지 않고 독립적으로 사용할 수 있다.</li>
-</ul>
-<h3 id="SpEL에서-표현할-수-있는-기능들"><a href="#SpEL에서-표현할-수-있는-기능들" class="headerlink" title="SpEL에서 표현할 수 있는 기능들"></a>SpEL에서 표현할 수 있는 기능들</h3><pre><code>* 문자열 표현
-* 프로퍼티, 배열, 리스트, 맵
-* 인라인 리스트/맵
-* 배열 생성
-* 메소드 호출
-* 오퍼레이터
-* 타입
-* 생성자
-* 변수
-* 함수
-* 빈 참조
-* 삼항 연산자
-</code></pre><h2 id="ExpressionParser"><a href="#ExpressionParser" class="headerlink" title="ExpressionParser"></a>ExpressionParser</h2><ul>
-<li>SpelExpressionParser는 Spring에서 제공하는 SpEL 클래스이다.</li>
-<li>SpelExpressionParser는 ExpressionParser 인터페이스를 구현한 클래스로서 SpEL 표현식을 파싱할 수 있다.</li>
-<li>파싱한 표현식은 Expression 객체이고 getValue함수를 통해 형변환된 결과를 얻을 수 있다.</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ExpressionParser parser = <span class="keyword">new</span> SpelExpressionParser();</span><br><span class="line">Expression expression = parser.parseExpression(<span class="string">"2+100"</span>);</span><br><span class="line">Integer value = expression.getValue(Integer<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//SpEL은 다음과 같은 형식으로 메소드와 프로퍼티를 호출할 수 있다.</span></span><br><span class="line">Expression expression2 = parser.parseExpression(<span class="string">"'SpEL'.length()"</span>);</span><br><span class="line"><span class="keyword">int</span> len = expression2.getValue(<span class="keyword">int</span><span class="class">.<span class="keyword">class</span>)</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="Value-어노테이션을-통한-SpEL"><a href="#Value-어노테이션을-통한-SpEL" class="headerlink" title="@Value 어노테이션을 통한 SpEL"></a>@Value 어노테이션을 통한 SpEL</h2><ul>
-<li>Spring 환경에서 @Value 어노테이션은 SpEL 표현식으로 값을 정할 수 있다.</li>
-<li>Value 어노테이션에서 사용할 수 있는 SpEL문법은 다음과 같다.<ol>
-<li><h1 id="표현식"><a href="#표현식" class="headerlink" title="{ (표현식) }"></a>{ (표현식) }</h1></li>
-<li>${ (프로퍼티) }  -   SpEL은 프로퍼티를 표현할 수 있지만 반대로 프로퍼티는 SpEL을 표현할 수 없다.</li>
-<li><h1 id="프로퍼티-프로퍼티가-포함된-표현식을-사용할-수-있다"><a href="#프로퍼티-프로퍼티가-포함된-표현식을-사용할-수-있다" class="headerlink" title="{ ${ (프로퍼티) } }   -   프로퍼티가 포함된 표현식을 사용할 수 있다."></a>{ ${ (프로퍼티) } }   -   프로퍼티가 포함된 표현식을 사용할 수 있다.</h1></li>
-</ol>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">   <span class="meta">@Value</span>(<span class="string">"#&#123;1+1&#125;"</span>)<span class="comment">//#&#123;&#125;로 안의 표현식을 인식하고 결과값을 프로퍼티에 주입해준다.</span></span><br><span class="line">   <span class="keyword">int</span> value;</span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;'hello' + 'world'&#125;"</span>)</span><br><span class="line">String greeting;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;1 eq 1&#125;"</span>)</span><br><span class="line"><span class="keyword">boolean</span> tof;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"$&#123;my.value&#125;"</span>)<span class="comment">//$&#123;&#125;로 프로퍼티의 키값을 주입받을 수 있다.</span></span><br><span class="line"><span class="keyword">int</span> myValue;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;$&#123;my.value&#125; eq 100&#125;"</span>)<span class="comment">//표현식 내부에 프로퍼티를 넣을 수 있음.</span></span><br><span class="line"><span class="keyword">boolean</span> isMyValue;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;'spring'&#125;"</span>)<span class="comment">//문자열 그대로 출력된다.</span></span><br><span class="line">String spring;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;sample.data&#125;"</span>)<span class="comment">//Bean의 데이터를 호출할 수 있음, 메소드 호출도 가능하다</span></span><br><span class="line"><span class="keyword">int</span> sData;</span><br></pre></td></tr></table></figure></div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2020-11-02T08:04:49.000Z" title="2020-11-02T08:04:49.000Z">2020-11-02</time><span class="level-item"><a class="link-muted" href="/categories/FrameWork/">FrameWork</a><span> / </span><a class="link-muted" href="/categories/FrameWork/%EC%8A%A4%ED%94%84%EB%A7%81/">스프링</a><span> / </span><a class="link-muted" href="/categories/FrameWork/%EC%8A%A4%ED%94%84%EB%A7%81/%EC%99%B8%EC%A0%84/">외전</a></span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/11/02/Spring/spring-3/">Spring - 중복된 빈 등록에 대한 처리</a></h1><div class="content"><hr>
+</ul></div><a class="article-more button is-small size-small" href="/2020/11/13/Spring/spring-10/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2020-11-02T08:04:49.000Z" title="2020-11-02T08:04:49.000Z">2020-11-02</time><span class="level-item"><a class="link-muted" href="/categories/FrameWork/">FrameWork</a><span> / </span><a class="link-muted" href="/categories/FrameWork/%EC%8A%A4%ED%94%84%EB%A7%81/">스프링</a><span> / </span><a class="link-muted" href="/categories/FrameWork/%EC%8A%A4%ED%94%84%EB%A7%81/%EC%99%B8%EC%A0%84/">외전</a></span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/11/02/Spring/spring-3/">Spring - 중복된 빈 등록에 대한 처리</a></h1><div class="content"><hr>
 <h1 id="스프링-의존-객체-선택"><a href="#스프링-의존-객체-선택" class="headerlink" title="스프링 의존 객체 선택"></a>스프링 의존 객체 선택</h1><ul>
 <li>컴포넌트 Annotation은 싱글톤 범위로 등록되며 같은 타입의 빈이 다른 클래스에서 등록된 경우 에러가 발생한다.</li>
 </ul>
